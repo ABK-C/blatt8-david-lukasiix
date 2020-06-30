@@ -1,0 +1,11 @@
+Trapez
+Funktion    I_0           I_1          I_2           I_3          analytisch
+Pol1        19.5          19.5         19.5          19.5         19.5
+Pol2        -10.5         -3.75        -2.0625       -1.64062     -1.5
+Gauss       0.605061      0.496807     0.498061      0.498496     0.5
+
+Richardson aus I_k und I_(k-1)
+Funktion    k=1           k=2          k=3           analytisch
+Pol1        19.5          19.5         19.5          19.5
+Pol2        -12.75        -4.3125      -2.20312      -1.5
+Gauss       0.641146      0.496389     0.497916      0.5
