@@ -18,15 +18,13 @@ public:
   double operator()(double x) { return 1 / (sqrt(M_PI * 2)) * exp(-x * x / 2); }
 };
 
-
 // berechnet Werte nach Trapezformel von I_0 bis I_N
-template <class Functor> std::vector <double> trapez(Functor f, double a, double b, int N) 
+template <class Functor> std::vector <double> trapez(Functor f, double a, double b, int N)
 {
   std::vector<double> I(N + 1); // Feld mit N+1 Eintraegen
   const double h_0 = b - a;
   I[0] = h_0 / 2 * (f(a) + f(b));
-  I[1] = 0.5 * (I[0] + h_0 * f(a+0.5*h_0));
-  for (int k = 1; k <= N-1; ++k) {
+  for (int k = 0; k <= N; ++k) {
     int n = pow(2, k);
     double h_n = double(h_0)/double(n);
     double T_n = I[k];
@@ -51,13 +49,22 @@ double richardson(double Iprev, double I) {
 // I: Ergebnis von trapez()
 std::vector<std::vector<double>> romberg(std::vector<double> I) {
   const int N = I.size() - 1;
-  std::vector<std::vector<double>> R(N + 1);
+  std::vector<std::vector<double>> R(N+1);
+
+  // Werte für n=0;
   for (int k = 0; k <= N; ++k) {
     R[k].push_back(I[k]);
   }
+
+  //Werte ab n=1
+  for (int n = 1; n <= N; ++n) {
+    for(int k = 0; k<=N-n; ++k) {
+      double extr = R[k+1][n-1]+((R[k+1][n-1]-R[k][n-1])/(pow(2,2*n)-1));
+      R[k].push_back(extr);
+     }   
+  }
   return R;
 }
-
 
 void testeAufgabe1() {
   Pol1 f;
@@ -75,7 +82,7 @@ void testeAufgabe1() {
   std::cout << "A1: Richardson : " << rich << " : " << (rich == -1.5 ? "ja " : "nein") << std::endl;
 }
 
-/*
+
 void testeAufgabe2() {
   Pol1 f;
   std::vector<std::vector<double>> Rf = romberg(trapez(f, 0, 3, 3));
@@ -87,17 +94,17 @@ void testeAufgabe2() {
       ++entries;
     }
   }
-  std::cout << "A2: alle Eintraege für f sind 1.5:" << (alle_richtig ? "ja" : "nein") << std::endl;
+  std::cout << "A2: alle Eintraege für f sind 19.5:" << (alle_richtig ? "ja" : "nein") << std::endl;
   std::cout << "A2: korrekte Zahl an Einträgen:" << (entries == 10 ? "ja" : "nein") << std::endl;
   Pol2 g;
   std::vector<std::vector<double>> Rg = romberg(trapez(g, 0, 3, 3));
   std::cout << "A2: R[1][1] und R[2][1] für g gleich -1.5: " << ((Rg[1][1] == -1.5) && (Rg[2][1] == -1.5) ? " ja " : " nein") << std::endl;
 }
-*/
+
 
 int main() {
   // Testfunktion:
-  Gauss f;
+  Pol2 f;
   std::cout << "f(0) = " << f(0) << '\n';
   // berechne Trapezformel fuer f
   std::vector<double> tf = trapez(f, 0., 3., 3);
@@ -123,7 +130,5 @@ int main() {
 
   testeAufgabe1();
 
-  /*
   testeAufgabe2();
-  */
 }
